@@ -96,7 +96,11 @@ RCT_EXPORT_METHOD(showPayPalViewController:(RCTResponseSenderBlock)callback)
         [payPalDriver authorizeAccountWithCompletion:^(BTPayPalAccountNonce *tokenizedPayPalAccount, NSError *error) {
             NSArray *args = @[];
             if ( error == nil ) {
-                args = @[[NSNull null], tokenizedPayPalAccount.nonce];
+                if (tokenizedPayPalAccount == nil) {
+                    args = @[@"User cancelled payment", [NSNull null]];
+                } else {
+                    args = @[[NSNull null], tokenizedPayPalAccount.nonce];
+                }
             } else {
                 args = @[error.description, [NSNull null]];
             }
@@ -117,7 +121,6 @@ RCT_EXPORT_METHOD(getCardNonce: (NSString *)cardNumber
 
     [cardClient tokenizeCard:card
                   completion:^(BTCardNonce *tokenizedCard, NSError *error) {
-
                       NSArray *args = @[];
                       if ( error == nil ) {
                           args = @[[NSNull null], tokenizedCard.nonce];
