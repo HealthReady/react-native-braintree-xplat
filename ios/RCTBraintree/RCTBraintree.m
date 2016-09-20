@@ -55,16 +55,20 @@ RCT_EXPORT_METHOD(showPaymentViewController:(NSDictionary *)options callback:(RC
         BTDropInViewController *dropInViewController = [[BTDropInViewController alloc] initWithAPIClient:self.braintreeClient];
         dropInViewController.delegate = self;
 
-        NSLog(@"%@", options);
+        NSLog(@"Options: %@", options);
+        BTPaymentRequest *paymentRequest = [[BTPaymentRequest alloc] init];
+        if (options[@"summaryTitle"]) paymentRequest.summaryTitle = options[@"summaryTitle"];
+        if (options[@"summaryDescription"]) paymentRequest.summaryDescription = options[@"summaryDescription"];
+        if (options[@"displayAmount"]) paymentRequest.displayAmount = options[@"displayAmount"];
+        if (options[@"callToActionText"]) paymentRequest.callToActionText = options[@"callToActionText"];
+        dropInViewController.paymentRequest = paymentRequest;
 
         UIColor *tintColor = options[@"tintColor"];
         UIColor *bgColor = options[@"bgColor"];
         UIColor *barBgColor = options[@"barBgColor"];
         UIColor *barTintColor = options[@"barTintColor"];
-
         if (tintColor) dropInViewController.view.tintColor = [RCTConvert UIColor:tintColor];
         if (bgColor) dropInViewController.view.backgroundColor = [RCTConvert UIColor:bgColor];
-
         dropInViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(userDidCancelPayment)];
 
         self.callback = callback;
